@@ -10,10 +10,12 @@ public class AppRunner {
     private final UniversalArray<Product> products = new UniversalArrayImpl<>();
 
     private final CoinAcceptor coinAcceptor;
+    private final Cashaccceptor cashaccceptor;
 
     private static boolean isExit = false;
 
     private AppRunner() {
+
         products.addAll(new Product[]{
                 new Water(ActionLetter.B, 20),
                 new CocaCola(ActionLetter.C, 50),
@@ -23,6 +25,7 @@ public class AppRunner {
                 new Pistachios(ActionLetter.G, 130)
         });
         coinAcceptor = new CoinAcceptor(100);
+        cashaccceptor = new Cashaccceptor(100);
     }
 
     public static void run() {
