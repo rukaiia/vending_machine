@@ -10,10 +10,12 @@ public class AppRunner {
     private final UniversalArray<Product> products = new UniversalArrayImpl<>();
 
     private final CoinAcceptor coinAcceptor;
+    private final Cashaccceptor cashaccceptor;
 
     private static boolean isExit = false;
 
     private AppRunner() {
+
         products.addAll(new Product[]{
                 new Water(ActionLetter.B, 20),
                 new CocaCola(ActionLetter.C, 50),
@@ -23,6 +25,7 @@ public class AppRunner {
                 new Pistachios(ActionLetter.G, 130)
         });
         coinAcceptor = new CoinAcceptor(100);
+        cashaccceptor = new Cashaccceptor(100);
     }
 
     public static void run() {
@@ -37,6 +40,8 @@ public class AppRunner {
         showProducts(products);
 
         print("Монет на сумму: " + coinAcceptor.getAmount());
+        print("Купюр на сумму: " + cashaccceptor.getAmount());
+
 
         UniversalArray<Product> allowProducts = new UniversalArrayImpl<>();
         allowProducts.addAll(getAllowedProducts().toArray());
@@ -47,7 +52,8 @@ public class AppRunner {
     private UniversalArray<Product> getAllowedProducts() {
         UniversalArray<Product> allowProducts = new UniversalArrayImpl<>();
         for (int i = 0; i < products.size(); i++) {
-            if (coinAcceptor.getAmount() >= products.get(i).getPrice()) {
+            if (coinAcceptor.getAmount() >= products.get(i).getPrice() || cashaccceptor.getAmount() >= products.get(i).getPrice()) {
+
                 allowProducts.add(products.get(i));
             }
         }
@@ -55,34 +61,60 @@ public class AppRunner {
     }
 
     private void chooseAction(UniversalArray<Product> products) {
-        print(" a - Пополнить баланс");
         showActions(products);
-        print(" h - Выйти");
-        String action = fromConsole().substring(0, 1);
-        if ("a".equalsIgnoreCase(action)) {
-            coinAcceptor.setAmount(coinAcceptor.getAmount() + 10);
-            print("Вы пополнили баланс на 10");
+        print("'h' для выхода):");
+        String action = fromConsole().trim();
+        if (action.equalsIgnoreCase("h")) {
+            isExit = true;
             return;
         }
-        try {
-            for (int i = 0; i < products.size(); i++) {
-                if (products.get(i).getActionLetter().equals(ActionLetter.valueOf(action.toUpperCase()))) {
-                    coinAcceptor.setAmount(coinAcceptor.getAmount() - products.get(i).getPrice());
-                    print("Вы купили " + products.get(i).getName());
-                    break;
-                }
-            }
-        } catch (IllegalArgumentException e) {
-            if ("h".equalsIgnoreCase(action)) {
-                isExit = true;
-            } else {
-                print("Недопустимая буква. Попрбуйте еще раз.");
-                chooseAction(products);
+        print("Выберите товар для покупки:");
+        String productCode = fromConsole().trim();
+        for (int i = 0; i < products.size(); i++) {
+            if (products.get(i).getActionLetter().getValue().equalsIgnoreCase(productCode)) {
+                choosePaymentMethod(products.get(i));
+                return;
             }
         }
-
-
+        print("Товар не найден.");
     }
+    private void choosePaymentMethod(Product product) {
+        print("Выберите метод оплаты: (1 - монеты,  2 - купюры)");
+        int paymentMethod = Integer.parseInt(fromConsole().trim());
+        switch (paymentMethod) {
+            case 1:
+                handleCoinPayment(product);
+                break;
+            case 2:
+                handleCashPayment(product);
+                break;
+
+            default:
+                print("Недопустимый метод оплаты.");
+                break;
+        }
+    }
+
+    private void handleCoinPayment(Product product) {
+        if (coinAcceptor.getAmount() >= product.getPrice()) {
+            coinAcceptor.setAmount(coinAcceptor.getAmount() - product.getPrice());
+            print("Вы купили " + product.getName());
+        } else {
+            print("Недостаточно монет для оплаты.");
+        }
+    }
+
+    private void handleCashPayment(Product product) {
+        if (cashaccceptor.getAmount() >= product.getPrice()) {
+            cashaccceptor.setAmount(cashaccceptor.getAmount() - product.getPrice());
+            print("Вы купили " + product.getName());
+        } else {
+            print("Недостаточно наличных для оплаты.");
+        }
+    }
+
+
+
 
     private void showActions(UniversalArray<Product> products) {
         for (int i = 0; i < products.size(); i++) {
