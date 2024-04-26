@@ -40,6 +40,8 @@ public class AppRunner {
         showProducts(products);
 
         print("Монет на сумму: " + coinAcceptor.getAmount());
+        print("Купюр на сумму: " + cashaccceptor.getAmount());
+
 
         UniversalArray<Product> allowProducts = new UniversalArrayImpl<>();
         allowProducts.addAll(getAllowedProducts().toArray());
@@ -50,7 +52,8 @@ public class AppRunner {
     private UniversalArray<Product> getAllowedProducts() {
         UniversalArray<Product> allowProducts = new UniversalArrayImpl<>();
         for (int i = 0; i < products.size(); i++) {
-            if (coinAcceptor.getAmount() >= products.get(i).getPrice()) {
+            if (coinAcceptor.getAmount() >= products.get(i).getPrice() || cashaccceptor.getAmount() >= products.get(i).getPrice()) {
+
                 allowProducts.add(products.get(i));
             }
         }
@@ -60,7 +63,7 @@ public class AppRunner {
     private void chooseAction(UniversalArray<Product> products) {
         showActions(products);
         print(" h - Выйти");
-        String action = fromConsole().substring(0, 1);
+        String action = fromConsole().trim();
         try {
             for (int i = 0; i < products.size(); i++) {
                 if (products.get(i).getActionLetter().equals(ActionLetter.valueOf(action.toUpperCase()))) {
