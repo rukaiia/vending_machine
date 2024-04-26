@@ -64,6 +64,11 @@ public class AppRunner {
         showActions(products);
         print(" h - Выйти");
         String action = fromConsole().trim();
+        if (action.equalsIgnoreCase("h")){
+            isExit = true;
+            return;
+            
+        }
         try {
             for (int i = 0; i < products.size(); i++) {
                 if (products.get(i).getActionLetter().equals(ActionLetter.valueOf(action.toUpperCase()))) {
