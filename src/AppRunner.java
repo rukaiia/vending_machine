@@ -62,7 +62,7 @@ public class AppRunner {
 
     private void chooseAction(UniversalArray<Product> products) {
         showActions(products);
-        print("Выберите действие ('h' для выхода):");
+        print("'h' для выхода):");
         String action = fromConsole().trim();
         if (action.equalsIgnoreCase("h")) {
             isExit = true;
@@ -79,7 +79,7 @@ public class AppRunner {
         print("Товар не найден.");
     }
     private void choosePaymentMethod(Product product) {
-        print("Выберите метод оплаты: (1 - монеты, 2 - наличные, 3 - купюры)");
+        print("Выберите метод оплаты: (1 - монеты,  2 - купюры)");
         int paymentMethod = Integer.parseInt(fromConsole().trim());
         switch (paymentMethod) {
             case 1:
@@ -88,7 +88,7 @@ public class AppRunner {
             case 2:
                 handleCashPayment(product);
                 break;
-           
+
             default:
                 print("Недопустимый метод оплаты.");
                 break;
