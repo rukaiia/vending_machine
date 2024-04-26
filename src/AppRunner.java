@@ -62,33 +62,59 @@ public class AppRunner {
 
     private void chooseAction(UniversalArray<Product> products) {
         showActions(products);
-        print(" h - Выйти");
+        print("Выберите действие ('h' для выхода):");
         String action = fromConsole().trim();
-        if (action.equalsIgnoreCase("h")){
+        if (action.equalsIgnoreCase("h")) {
             isExit = true;
             return;
-
         }
-        print("Выберите способ оплыты: 1 - монеты, 2 - купюры: ");
-        int paymentMethod = Integer.parseInt(fromConsole().trim());
-        try {
-            for (int i = 0; i < products.size(); i++) {
-                if (products.get(i).getActionLetter().equals(ActionLetter.valueOf(action.toUpperCase()))) {
-                    coinAcceptor.setAmount(coinAcceptor.getAmount() - products.get(i).getPrice());
-                    print("Вы купили " + products.get(i).getName());
-                    break;
-                } else if ("h".equalsIgnoreCase(action)) {
-                    isExit = true;
-                    break;
-                }
+        print("Выберите товар для покупки:");
+        String productCode = fromConsole().trim();
+        for (int i = 0; i < products.size(); i++) {
+            if (products.get(i).getActionLetter().getValue().equalsIgnoreCase(productCode)) {
+                choosePaymentMethod(products.get(i));
+                return;
             }
-        } catch (IllegalArgumentException e) {
-            print("Недопустимая буква. Попрбуйте еще раз.");
-            chooseAction(products);
         }
-
-
+        print("Товар не найден.");
     }
+    private void choosePaymentMethod(Product product) {
+        print("Выберите метод оплаты: (1 - монеты, 2 - наличные, 3 - купюры)");
+        int paymentMethod = Integer.parseInt(fromConsole().trim());
+        switch (paymentMethod) {
+            case 1:
+                handleCoinPayment(product);
+                break;
+            case 2:
+                handleCashPayment(product);
+                break;
+           
+            default:
+                print("Недопустимый метод оплаты.");
+                break;
+        }
+    }
+
+    private void handleCoinPayment(Product product) {
+        if (coinAcceptor.getAmount() >= product.getPrice()) {
+            coinAcceptor.setAmount(coinAcceptor.getAmount() - product.getPrice());
+            print("Вы купили " + product.getName());
+        } else {
+            print("Недостаточно монет для оплаты.");
+        }
+    }
+
+    private void handleCashPayment(Product product) {
+        if (cashaccceptor.getAmount() >= product.getPrice()) {
+            cashaccceptor.setAmount(cashaccceptor.getAmount() - product.getPrice());
+            print("Вы купили " + product.getName());
+        } else {
+            print("Недостаточно наличных для оплаты.");
+        }
+    }
+
+
+
 
     private void showActions(UniversalArray<Product> products) {
         for (int i = 0; i < products.size(); i++) {
