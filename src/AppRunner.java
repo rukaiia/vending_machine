@@ -67,8 +67,10 @@ public class AppRunner {
         if (action.equalsIgnoreCase("h")){
             isExit = true;
             return;
-            
+
         }
+        print("Выберите способ оплыты: 1 - монеты, 2 - купюры: ");
+        int paymentMethod = Integer.parseInt(fromConsole().trim());
         try {
             for (int i = 0; i < products.size(); i++) {
                 if (products.get(i).getActionLetter().equals(ActionLetter.valueOf(action.toUpperCase()))) {
